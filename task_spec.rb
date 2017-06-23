@@ -92,34 +92,93 @@ describe Task do #task has to be a predefined class
     task1.due_date(2017/06/24)
     task2.due_date(2018/02/27)
     expect(tasks.show_due_tasks(2017/06/24)).to eq([task1])
-    expect(tasks.add_scheduled_task(task1)).to eq(task1)
-
+    expect(tasks.add_scheduled_task(task1)).to eq([task1])
   end
 
-  it " As a developer with a TaskList, I can list all the not completed items that are due today" do
-    task1 = Due_task.new
+  it "can add items with due dates to my TaskList" do
+    task1 = Due_task.new  #make a couple of scheduled tasks
     task2 = Due_task.new
-    task1.title("Rotate Tires")
-    task2.title("Merlin bath")
-    tasks = Tasklist.new
-    tasks.add_task(task1)
-    tasks.add_task(task2)
-    task1.due_date(2017/06/24)
-    task1.completed
-    task2.due_date(2018/02/27)
-    expect(tasks.show_due_tasks(2017/06/24)).to eq([task1])
-    expect(tasks.show_incomplete)
-    #TODO: Create some sort of AND statement with incomplete tasks and the dates
+    task1.title("Change oil")
+    task2.title("Eat lots of greasy food")
+    task1.due_date(2017/06/25)
+    task2.due_date(2017/06/26)
+    to_dos = Tasklist.new   #make a new object of class Tasklist
+    to_dos.add_scheduled_task(task1) #add a task to Tasklist of the scheduled class
+    to_dos.add_scheduled_task(task2)
+    expect(to_dos.get_scheduled_task).to eq([task1, task2]) #Can pass to eq more than 1 argument, as long as all arguments are in an array
   end
 
+  it "list all the not completed items that are due today" do
+    task1 = Due_task.new  #make a couple of scheduled tasks
+    task2 = Due_task.new
+    task3 = Due_task.new
+    task1.title("go to job fair")
+    task2.title("drink lots of beer")
+    task3.title("laundry")
+    task1.due_date("06/23/2017")
+    task2.due_date("06/23/2017")
+    task3.due_date("07/28/2017")
+    list = Tasklist.new
+    list.add_scheduled_task(task1)
+    list.add_scheduled_task(task2)
+    list.add_scheduled_task(task3)
+    expect(list.get_inc_due_today).to eq([task1, task2])
+    task1.completed
+    expect(list.get_inc_due_today).to eq([task2])
 
+  end
+
+  it "can list all the incompleted items in order of due date" do
+    task1 = Due_task.new  #make a couple of scheduled tasks
+    task2 = Due_task.new
+    task3 = Due_task.new
+    task1.title("Generic Task 1")
+    task2.title("Different Task 2")
+    task3.title("Slightly unimportant task 3")
+    task1.due_date("06/25/2017")
+    task2.due_date("06/23/2017")
+    task3.due_date("07/28/2017")
+    list = Tasklist.new
+    list.add_scheduled_task(task1)
+    list.add_scheduled_task(task2)
+    list.add_scheduled_task(task3)
+    expect(list.show_inc_by_date).to eq([task2, task1, task3])
+  end
+
+  it "can list all the incompleted items in order of due date, and then the items without due dates" do
+    task1 = Due_task.new  #make a couple of scheduled tasks
+    task2 = Due_task.new
+    task3 = Due_task.new
+    task1.title("Slay dragon")
+    task2.title("Out-swim mer-people")
+    task3.title("Go through maze")
+    task1.due_date("09/28/2017")
+    task2.due_date("08/28/2017")
+    task3.due_date("07/28/2017")
+
+    task4 = Task.new  #make a couple of scheduled tasks
+    task5 = Task.new
+    task6 = Task.new
+    task4.title("Play video games")
+    task5.title("Play tennis")
+    task6.title("Mini golf")
+
+    list = Tasklist.new
+    list.add_scheduled_task(task1)
+    list.add_scheduled_task(task2)
+    list.add_scheduled_task(task3)
+
+    list.add_task(task4)
+    list.add_task(task5)
+    list.add_task(task6)
+
+    expect(list.show_inc_by_date).to eq([task3, task2, task1])
+    expect(list.get_unscheduled_task).to eq([task4, task5, task6])
+  end
 end #ends describe
 
-# Story: As a developer with a TaskList, I can list all the not completed items that are due today.
 
-
-
-
+# Story: As a developer with a TaskList with and without due dates, I can list all the not completed items in order of due date, and then the items without due dates.
 
  # task1 = Task.new #make new task.
  # => #<Task:0x007fdc6b084540 @stat="Incomplete">
